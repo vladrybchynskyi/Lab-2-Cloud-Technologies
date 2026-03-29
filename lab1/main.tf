@@ -1,14 +1,16 @@
-resource "aws_dynamodb_table" "this" {
-  name           = var.table_name
-  billing_mode   = "PAY_PER_REQUEST"
-  hash_key       = var.hash_key
+module "label" {
+  source  = "cloudposse/label/null"
+  version = "0.25.0"
 
-  attribute {
-    name = var.hash_key
-    type = "S" # "S" означає String (рядок)
-  }
+  namespace   = var.namespace
+  environment = var.environment
+  name        = var.name
+  delimiter   = "-"
+}
 
-  tags = {
-    Module = "DynamoDB"
-  }
+module "dynamodb_table" {
+  source = "./modules/dynamodb"
+
+  table_name = module.label.id 
+  hash_key   = "id"
 }
